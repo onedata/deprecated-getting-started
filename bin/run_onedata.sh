@@ -109,12 +109,12 @@ clean() {
   [[ $(git status --porcelain "$PROVIDER_COMPOSE_FILE") != ""  ]] && echo "Warrning the file $PROVIDER_COMPOSE_FILE has changed, the cleaning procedure may not work!"
  
   echo "Removing provider and/or zone config dirs..."
-  sudo rm -rf "${ONEZONE_CONFIG_DIR}" 
-  sudo rm -rf "${ONEPROVIDER_CONFIG_DIR}" 
+  sudo rm -rf "${ONEZONE_CONFIG_DIR}"
+  sudo rm -rf "${ONEPROVIDER_CONFIG_DIR}"
   
 
   echo "Removing provider data dir..."
-  sudo rm -rf "${ONEPROVIDER_DATA_DIR}" 
+  sudo rm -rf "${ONEPROVIDER_DATA_DIR}"
   
   echo "Removing Onedata containers..."
   if (docker rm -vf 'onezone-1' 2>/dev/null) ; then
@@ -248,6 +248,10 @@ main() {
           --set-lat-long)
               get_log_lat_flag=1
               ;;
+	  --keep-old-dockers)
+	      keep_old_dockers=$2
+	      shift
+	      ;;
           --detach)
               compose_up_opts="-d"
               ;;
@@ -264,12 +268,18 @@ main() {
 
   check_if_clean
   if [[ $? -eq 1 ]]; then
-    echo "We detected configuration files, data and docker containers from a previous Onedata deployment. 
+    if [[ -z "$keep_old_dockers" ]]; then
+      echo "We detected configuration files, data and docker containers from a previous Onedata deployment. 
 Would you like to keep them (y) or start a new deployment (n)?"
-    read -r agree_to_clean
-    if [[ $agree_to_clean == 'n' ]]; then
-      clean
+      read -r agree_to_clean
+      if [[ $agree_to_clean == 'n' ]]; then
+        clean
+      fi
     fi
+  fi
+
+  if [[ $keep_old_dockers -eq 'n' ]];then
+    clean
   fi
 
   if [[ $clean -eq 1 ]]; then
