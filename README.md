@@ -1,3 +1,5 @@
+> The content of this repository is deprecated, please refer to onedata.org for uptodate guides.
+> 
 # Onedata Quickstart Scenarios
 
 This repository contains a few scenarios for quickly and easily getting started with [Onedata](http://github.com/onedata/onedata) distributed data management platform. The scenarios are intended for administrators who want to get familiar with Onedata. 
